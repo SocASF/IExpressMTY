@@ -1,0 +1,2 @@
+# Imprenta Digital de Polet Muñiz
+Definición de la V2 de la Imprenta Digital de Polet Muñiz en el Proyecto. Desarrollado por LxingA con ReactJS + ViteJS y entre otras dependencias para la correcta funcionalidad de la versión web.
