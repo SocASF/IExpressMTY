@@ -18,6 +18,7 @@ import PageHome from './page';
 import PagePolicy from './page/policy';
 import PageCategory from './page/category';
 import PageProduct from './page/product';
+import PageContact from './page/contact';
 import Error from './view/error';
 
 /** Inicialización de la Aplicación en el DOM */
@@ -45,6 +46,9 @@ export default function Application(){
                         }/>
                         <Route path="/policy" element={
                             <PagePolicy />
+                        }/>
+                        <Route path="/contact" element={
+                            <PageContact />
                         }/>
                     </Route>
                 ])

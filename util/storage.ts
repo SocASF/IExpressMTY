@@ -8,9 +8,14 @@
 import type {Application} from '../types/global';
 
 /** Utilidad para la Obtención del Punto Final para el Acceso a los Recursos de la Aplicación */
-export const Provider = (name:string,external:boolean = false): string => {
+export const Provider = (name:string,param:Record<string,any> = {},external:boolean = false): string => {
     const {endpoint,token}: Application = (Local["get"]("global"));
-    return external ? `${(endpoint["filter"](({name}) => (name == "global"))[0]["path"])["replace"]("cdn",("gb-" + import.meta.env.SCParamEnvDefineAPIApplicationID["split"]("-")[4]))}/${name}?v=${token}` : (`${endpoint["filter"](({name}) => (name == "resources"))[0]["path"]}/${name}?access_token=${token}`);
+    let keys: string = "";
+    (Object["keys"](param)["forEach"]((k,i) => {
+        let value: any = (Object["values"](param)[i]);
+        keys += `&${k}=${value}`;
+    }));
+    return external ? `${(endpoint["filter"](({name}) => (name == "global"))[0]["path"])["replace"]("cdn",("gb-" + import.meta.env.SCParamEnvDefineAPIApplicationID["split"]("-")[4]))}/${name}?v=${token}` : (`${endpoint["filter"](({name}) => (name == "resources"))[0]["path"]}/${name}?access_token=${token}${keys}`);
 };
 
 /** Definición del Almacenamiento Local de la Aplicación en el Contexto de Inicialización */

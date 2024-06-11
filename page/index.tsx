@@ -5,7 +5,7 @@
 @description Página Principal de la Aplicación
 @date 07/05/24 02:00AM
 */
-import {GlobalBannerContainer,GlobalAdContainer,GlobalHelpContainer} from '../components/utils.component';
+import {GlobalBannerContainer,GlobalAdContainer,GlobalHelpContainer,GlobalProductContainer} from '../components/utils.component';
 import Template from '../view/default';
 
 /** Página Principal de la Aplicación en el DOM */
@@ -13,6 +13,7 @@ export default function Home(){
     return (
         <Template strategy={{}}>
             <GlobalBannerContainer />
+            <GlobalProductContainer />
             <GlobalAdContainer item={[
                 {
                     title: "Pedidos Exprés",

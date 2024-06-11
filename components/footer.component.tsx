@@ -17,12 +17,12 @@ export const GlobalFooterContainer = () => {
                 <AddonLogoContainer />
                 {([
                     {
-                        label: "Políticas",
+                        label: "Políticas de Compra",
                         href: "/policy"
                     },
                     {
-                        label: "Rastrear Envío",
-                        href: "/"
+                        label: "Contacto",
+                        href: "/contact"
                     }
                 ] as {href:string,label:string}[])["map"](({href,label},_i_) => (
                     <Link key={_i_} to={href} onClick={_ => window["scrollTo"](0,0)}>

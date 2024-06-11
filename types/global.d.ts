@@ -82,7 +82,9 @@ export type Application = {
         type?: string
     }[],
     /** Definición de la Frase Típica para la Aplicación */
-    slogan?: string
+    slogan?: string,
+    /** Clave Pública de reCaptcha para la Aplicación */
+    reCaptchaSiteKey: string
 };
 
 /** Prototipo para el Objeto con la Paginación del Proyecto */

@@ -6,14 +6,17 @@
 @date 07/05/24 02:30AM
 */
 import {AddonSocialLink,AddonNavigatorLink,AddonBannerContainer,AddonAdContainer} from './utils.addon';
+import {AddonProductContainer} from './category.addon';
 import {useState,useContext} from 'react';
+import {Link} from 'react-router-dom';
 import {Context} from '../context/global.context';
 import {useQuery} from '@apollo/client';
-import {GraphQLCategoryBanner} from '../util/graphql';
+import {GraphQLCategoryBanner,GraphQLProductListener} from '../util/graphql';
 import Loader from 'react-loading-skeleton';
 import Storage from '../util/storage';
 import type {Application,Response} from '../types/global';
 import type {ProtoNavigatorLink,ProtoAdObject} from './utils.addon';
+import type {ReactNode} from 'react';
 
 /** Componente con el Contenedor de los Enlaces de Navegación para la Aplicación */
 export const GlobalNavigatorContainer = ({item,style}:{
@@ -148,9 +151,85 @@ export const GlobalHelpContainer = () => {
                     Si no encuentras una medida, forma o material que necesites, puedes contactarnos y especificar indicaciones para formalizar una cotización más personalizada.
                 </p>
             </div>
-            <a className="line" style={{cursor:"pointer"}}>
+            <Link to="/contact" className="line" style={{cursor:"pointer"}} onClick={_ => {
+                window["scrollTo"](0,0);
+            }}>
                 Solicitar Cotización
-            </a>
+            </Link>
+        </div>
+    );
+};
+
+/** Componente con los Productos Sugeridos Globales de la Aplicación */
+export const GlobalProductContainer = () => {
+    const {language} = (useContext(Context));
+    const {loading,data} = (useQuery(GraphQLProductListener,{
+        context: {
+            language
+        },
+        fetchPolicy: "cache-first",
+        variables: {
+            pagination: {
+                perPage: 6,
+                currentPage: 1
+            }
+        }
+    }));
+    const _item_: ReactNode[] = [];
+    for(let _x_ = 0; _x_ <= (5); _x_++) _item_["push"](
+        <li key={_x_} className="item">
+            <Loader className="producto" height={450} width={350} count={1}/>
+        </li>
+    );
+    return (
+        <div className="wrapper">
+            <div className="maxwidth">
+                <h3>
+                    Lo más impreso
+                </h3>
+                <p>
+                    Sugerencias para ti
+                </p>
+                <ul className="items">
+                    {loading ? (
+                        _item_
+                    ) : (data["sb79e4c68"] as Response)["rs"]!["ob"]["map"]((k,i) => (
+                        <li key={i} className="item">
+                            <AddonProductContainer {...{
+                                cover: k["image"]["filter"]((o:any) => (o["name"] == "cover"))[0]["key"],
+                                title: k["title"],
+                                identified: k["identified"]
+                            }}/>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        </div>
+    );
+};
+
+/** Componente con el Contenedor Global de Advertencia para la Aplicación */
+export const GlobalNoticeContainer = ({title,message}:{
+    /** Titulo a Ilustrar en el Contenedor */
+    title: string,
+    /** Mensaje a Mostrar en el Contenedor */
+    message: string
+}) => {
+    return (
+        <div className="advertencia">
+            <div className="minbox">
+                <h3>
+                    {title}
+                </h3>
+                <p>
+                    {message}
+                </p>
+                <button className="black" onClick={event => {
+                    event["preventDefault"]();
+                }}>
+                    Entendido
+                </button>
+            </div>
         </div>
     );
 };

@@ -11,8 +11,7 @@ import {GraphQLProductInfo} from '../util/graphql';
 import {Context as GlobalContext} from '../context/global.context';
 import {Context as ProductContext} from '../context/product.context';
 import {useContext} from 'react';
-import {AddonProductInput} from '../components/product.addon';
-import {ProductThumbnailContainer} from '../components/product.component';
+import {ProductThumbnailContainer,ProductViewMain,ProductViewMedia} from '../components/product.component';
 import Loader from 'react-loading-skeleton';
 import Template from '../view/default';
 import type {ChildrenSEO} from '../types/seo';
@@ -25,38 +24,49 @@ type RouterParam = {
     identified: string
 };
 
+/** Utilidad Esencial para la Definición del Objeto con la Entrada */
+const ObjectDefinition = (i:any,r:any): void => {
+    r[i["name"]] = {
+        value: (i["value"][0]["key"])
+    };
+    if(i["name"] != "iexgmSize") i["value"]["forEach"]((o:any) => {
+        r[i["name"]] = {
+            ...r[i["name"]],
+            extra: {
+                ...r[i["name"]]["extra"],
+                [o["key"]]: o["extra"]
+            }
+        };
+    });
+};
+
 /** Vista para la Visualización de los Productos en la Aplicación */
 export default function Product(){
     const {identified} = (useParams<RouterParam>());
     const {language} = (useContext(GlobalContext));
-    const {mutate,option} = (useContext(ProductContext));
+    const {mutate,option,view} = (useContext(ProductContext));
     const {loading,data} = (useQuery(GraphQLProductInfo,{
         context: {
             language
         },
-        initialFetchPolicy: "cache-only",
+        fetchPolicy: "cache-and-network",
         variables: {
             key: identified
         },
         onCompleted(data){
             let _curr_ = (data["s1b0ecf0b"] as Response)["rs"]!["ob"];
             let _obj_: any = {};
+            let _inp_: any = {};
             _curr_["forEach"](v => {
-                _obj_[v["name"]] = {
-                    value: (v["value"][0]["key"])
-                };v["value"]["forEach"]((o:any) => {
-                    _obj_[v["name"]] = {
-                        ..._obj_[v["name"]],
-                        extra: {
-                            ..._obj_[v["name"]]["extra"],
-                            [o["key"]]: o["extra"]
-                        }
-                    };
-                });
+                ObjectDefinition(v,_obj_);
+                if(v["extra"]) v["extra"]["forEach"]((k:any) => (ObjectDefinition(k,_inp_)));
             });
             mutate!({
                 action: "AC_INPUTV_INITIAL",
-                payload: _obj_
+                payload: {
+                    ..._obj_,
+                    ..._inp_
+                }
             });
         }
     }));
@@ -111,8 +121,16 @@ export default function Product(){
     );else{
         const ProductInfo = (data["sb79e4c68"] as Response)["rs"]!["ob"][0];
         const ConstructorParams = (data["s1b0ecf0b"] as Response)["rs"]!["ob"];
+        const ViewObject: any = {
+            product: ProductInfo,
+            constructor: ConstructorParams,
+            language,
+            identified
+        };
         return (
-            <Root>
+            <Root seo={{
+                title: ProductInfo["title"]
+            }}>
                 <div className="Constructor">
                     <div className="flexie">
                         <div className="col1">
@@ -124,22 +142,33 @@ export default function Product(){
                         </div>
                         <div className="colw">
                             <div className="Infoproducto">
-                                <h3 className="center">
-                                    {ProductInfo["title"]}
-                                    <em>
-                                        <span>
-                                            $
-                                        </span>
-                                        {option["price"]}
-                                    </em>
-                                </h3>
-                                {ConstructorParams["map"]((k,i) => (
-                                    <AddonProductInput key={i} {...{
-                                        label: k["label"],
-                                        item: k["value"],
-                                        name: k["name"]
-                                    }}/>
-                                ))}
+                                {(view == 1) ? (
+                                    <ProductViewMain {...ViewObject}/>
+                                ) : (view == 2) ? (
+                                    <ProductViewMedia {...ViewObject}/>
+                                ) : (view == 3) && (
+                                    <p>HOla Mundo 3</p>
+                                )}
+                                <div className="flexie" style={{position:"relative",marginBottom:20}}>
+                                    <button className="full" onClick={event => {
+                                        event["preventDefault"]();
+                                        mutate!({
+                                            action: "AC_DEFVIEWCURR_SET",
+                                            payload: "upper"
+                                        });
+                                    }}>
+                                        Siguiente Paso
+                                    </button>
+                                    <button className="line" onClick={event => {
+                                        event["preventDefault"]();
+                                        mutate!({
+                                            action: "AC_DEFVIEWCURR_SET",
+                                            payload: "lower"
+                                        });
+                                    }} style={(view <= 1) ? {pointerEvents:"none"} : {}} disabled={view <= 1}>
+                                        Retroceder Paso
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>

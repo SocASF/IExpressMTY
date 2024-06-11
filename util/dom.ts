@@ -18,6 +18,14 @@ export enum Type {
     "css" = "stylesheet"
 };
 
+/** Utilidad para la Aplicación de la Formúla Matemática para la Obtención del Total de Piezas de una Hoja en un Producto [Grou Hayabusa] */
+export const ProductMath = ({parent,children}:{
+    /** Número Real del Padre */
+    parent: number,
+    /** Número Real del Hijo */
+    children: number
+}): number => (Math["floor"](parent / children));
+
 /** Obtener el Valor de un Parámetro del Rutador Actual  */
 export const Parameter = (query:string): string | null => {
     const _handler_ = (new URLSearchParams(document["location"]["search"]));

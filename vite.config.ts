@@ -18,9 +18,7 @@ export default defineConfig({
     server: {
         port: Number(readFileSync(join(__dirname,"./port.sc"),"utf8")),
         strictPort: true,
-        hmr: {
-            protocol: "ws"
-        }
+        host: "0.0.0.0"
     },
     envPrefix: "SCParamEnv"
 });

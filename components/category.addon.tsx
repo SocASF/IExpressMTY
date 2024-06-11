@@ -35,7 +35,7 @@ export const AddonNavigatorOption = ({label,item,currentValue,actionID}:{
             <p>
                 {label}
             </p>
-            <select defaultValue="" value={currentValue} onChange={event => {
+            <select defaultValue={currentValue} onChange={event => {
                 event["preventDefault"]();
                 query(ctx => {
                     ctx["set"](_parameter_,(event["currentTarget"]["value"]));
@@ -133,7 +133,7 @@ export const AddonProductContainer = ({cover,title,identified}:ProtoProductConta
     return (
         <div className="producto">
             <div className="imgcover">
-                <img src={Provider(cover)}/>
+                <img src={Provider(cover,{format:"webp"})}/>
             </div>
             <div className="infoproduct">
                 <Link onClick={_handler_} className="white" to={_path_}>

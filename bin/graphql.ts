@@ -7,6 +7,8 @@
 */
 import {ApolloClient,ApolloLink,InMemoryCache,HttpLink,gql,from} from '@apollo/client';
 import {createFragmentRegistry} from '@apollo/client/cache';
+import {createPersistedQueryLink} from '@apollo/client/link/persisted-queries';
+import {sha256} from 'crypto-hash';
 import type {GraphQLContext} from '../types/context';
 
 /** Instancia de GraphQL para la Aplicación */
@@ -49,15 +51,11 @@ const GraphQL = (new ApolloClient({
                 }
             }));return (f(o));
         })),
-        /**(createPersistedQueryLink({sha256,useGETForHashedQueries:true})["concat"]((new HttpLink({
+        (createPersistedQueryLink({sha256,useGETForHashedQueries:true})["concat"]((new HttpLink({
             uri: (import.meta.env.SCParamEnvDefineAPIPathConnect + "/graphql"),
             useGETForQueries: true,
             includeUnusedVariables: false
-        }))))*/
-        (new HttpLink({
-            uri: (import.meta.env.SCParamEnvDefineAPIPathConnect + "/graphql"),
-            includeUnusedVariables: false
-        }))
+        }))))
     ])
 }));
 

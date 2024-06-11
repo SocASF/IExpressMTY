@@ -5,9 +5,10 @@
 @description Plantilla Predeterminada para la Aplicación
 @date 07/05/24 02:30AM
 */
-import {GlobalInformationContainer,GlobalCreditsContainer} from '../components/utils.component';
+import {GlobalInformationContainer,GlobalCreditsContainer,GlobalNoticeContainer} from '../components/utils.component';
 import {GlobalHeaderContainer} from '../components/header.component';
 import {GlobalFooterContainer} from '../components/footer.component';
+import {Context as GlobalContext} from '../context/global.context';
 import Storage from '../util/storage';
 import SEO from './seo';
 import type {Application} from '../types/global';
@@ -40,6 +41,13 @@ export default function Default({children,strategy}:{
                 <GlobalFooterContainer />
                 <GlobalCreditsContainer />
             </div>
+            <GlobalContext.Consumer>
+                {({notice}) => (
+                    notice && (
+                        <GlobalNoticeContainer {...notice}/>
+                    )
+                )}
+            </GlobalContext.Consumer>
         </SEO>
     );
 };

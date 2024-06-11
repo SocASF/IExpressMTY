@@ -110,6 +110,12 @@ export const GraphQLProductInfo = (gql`
             rs {
                 ob {
                     ...ProductEssential
+                    paper {
+                        identified
+                        height
+                        width
+                    }
+                    allowPrintPerPage
                 }
             }
         }
@@ -129,6 +135,45 @@ export const GraphQLProductInfo = (gql`
                             ...ProductInputValue
                         }
                     }
+                    priority
+                }
+            }
+        }
+    }
+`);
+
+/** Esquema para la Definición del Precio Base del Producto en Base de los Parámetros Esenciales del Constructor en la Aplicación */
+export const GraphQLProductPrice = (gql`
+    query ProductPrice($context:sf826fc26Request!) {
+        sf826fc26(currentContext:$context) {
+            ...ResponseEssential
+            rs {
+                ob {
+                    price
+                }
+            }
+        }
+    }
+`);
+
+/** Esquema para la Realización del Envío del Formulario de Contacto de la Aplicación */
+export const GraphQLMutationSenderMailer = (gql`
+    mutation SendContactInfo($object:JSON!,$captchaKey:String!) {
+        sac76de82(body:$object,captchaKey:$captchaKey) {
+            message
+            state
+        }
+    }
+`);
+
+/** Esquema para la Obtención del Listado de los Productos de la Aplicación sin Categoría */
+export const GraphQLProductListener = (gql`
+    query ProductListener($paginator:Paginator) {
+        sb79e4c68(pagination:$paginator) {
+            ...ResponseEssential
+            rs {
+                ob {
+                    ...ProductEssential
                 }
             }
         }

@@ -19,8 +19,9 @@ import type {Application as Prototype} from './types/global';
 API()["then"]($ => {
     if(typeof($) == "string") console["warn"]($);
     else{
-        const _information_: Prototype = $;
+        let _information_: Prototype = $;
         const _resource_: string[] = ["style.css","mobile.css","favicon.ico"];
+        _information_["reCaptchaSiteKey"] = (import.meta.env.SCParamEnvDefineReCaptchaPublicSiteKey);
         Storage["set"]("global",(_information_));
         _information_["endpoint"]["filter"](({type}) => (typeof(type) == "string"))["forEach"](({name,type,path}) => Element({
             attribute: {

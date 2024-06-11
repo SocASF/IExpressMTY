@@ -42,7 +42,7 @@ export const AddonLogoContainer = () => {
     return (
         <div className="alogo" title={name}>
             <Link to="/">
-                <img alt={name} src={Provider(resource["filter"](({name}) => (name == "logo.webp"))[0]["key"])}/>
+                <img alt={name} src={Provider(resource["filter"](({name}) => (name == "logo.webp"))[0]["key"],{format:"webp"})}/>
             </Link>
         </div>
     );
@@ -85,20 +85,6 @@ export const AddonMainMenuContainer = ({children}:{
                 }
             ]}/>
             {children}
-            <GlobalNavigatorContainer style="userlinks" item={[
-                {
-                    icon: "search",
-                    href: "/"
-                },
-                {
-                    icon: "user",
-                    href: "/"
-                },
-                {
-                    icon: "shopping-bag",
-                    href: "/"
-                }
-            ]}/>
         </div>
     );
 };

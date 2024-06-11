@@ -5,10 +5,11 @@
 @description Complementos Esenciales para el Componente con las Utilidades de la Aplicación
 @date 07/05/24 03:00AM
 */
-import {useRef,useEffect,useState} from 'react';
+import {useRef,useEffect,useState,Fragment} from 'react';
 import {Link} from 'react-router-dom';
 import {Provider} from '../util/storage';
-import type {Dispatch,SetStateAction} from 'react';
+import type {InputState} from '../page/contact';
+import type {Dispatch,SetStateAction,ReactNode,HTMLInputTypeAttribute,ChangeEvent} from 'react';
 
 /** Complemento con el Bóton de la Red Social */
 export const AddonSocialLink = ({to,type = "_blank",icon,callback}:{
@@ -128,7 +129,7 @@ export const AddonBannerContainer = ({title,message,cover,background,identified,
                         </Link>
                     )}
                 </div>
-                <img src={Provider(cover)}/>
+                <img src={Provider(cover,{format:"webp"})}/>
             </div>
         </div>
     );
@@ -184,5 +185,75 @@ export const AddonPolicyContainer = ({title,rule}:ProtoPolicyObject) => {
                 }}/>
             ))}
         </div>
+    );
+};
+
+/** Definición del Prototipo para las Entradas del Formulario de Contacto de la Aplicación */
+export type ProtoContactFormInput = {
+    /** Etiqueta a Mostrar en la Entrada */
+    label: string,
+    /** Tipo de Etiqueta a Renderizar en la Entrada */
+    tag: "input" | "textarea",
+    /** Nombre Identificable de la Entrada */
+    name: string,
+    /** Texto a Mostrar Encima de la Entrada */
+    placeholder: string,
+    /** Tipo de Entrada a Renderizar en el Formulario */
+    type: HTMLInputTypeAttribute,
+    /** Contenedor con los Callback Esenciales para la Ejecución del Formulario */
+    callback: Dispatch<SetStateAction<InputState>>,
+    /** Indicador de Deshabilitar la Entrada en el Contexto Actual */
+    disabled: boolean
+};
+
+/** Complemento para la Definición de las Entradas del Formulario de Contacto de la Aplicación */
+export const AddonFormContactInput = ({label,tag,name,placeholder,type,callback,disabled}:ProtoContactFormInput) => {
+    let _component_: ReactNode = null;
+    let _regex_: Record<string,(RegExp)> = {
+        email: /^[a-z0-9\.\-\_\!À-ÿ\u00f1\u00d1]+\@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/,
+        text: /^(.*)$/,
+        textarea: /^(.*)$/
+    };
+    const _onchange_ = (event:ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+        event["preventDefault"]();
+        callback(older => {
+            let _currented_ = older[event["target"]["name"]];
+            if(event["target"]["value"]["length"] == 0){
+                _currented_["message"] = "es requerido";
+                _currented_["value"] = undefined;
+            }else if(!_regex_[event["target"]["type"]]["test"](event["target"]["value"])){
+                _currented_["message"] = "no es válido";
+                _currented_["value"] = undefined;
+            }else if(event["target"]["value"]["length"] < event["target"]["minLength"]){
+                _currented_["message"] = `es inferior a ${event["target"]["minLength"]} de longitud, favor de aumentarle más`;
+                _currented_["value"] = undefined;
+            }else if(event["target"]["value"]["length"] >= event["target"]["maxLength"]){
+                _currented_["message"] = `es superior a ${event["target"]["maxLength"]} de longitud, favor de disminuirlo más`;
+                _currented_["value"] = undefined;
+            }else{
+                _currented_["message"] = undefined;
+                _currented_["value"] = (event["target"]["value"]);
+            }
+            older[event["target"]["name"]] = _currented_;
+            return ({...older});
+        });
+    };switch(tag){
+        case "input":
+            _component_ = (
+                <input onChange={_onchange_} minLength={2} maxLength={100} {...{placeholder,type,name,disabled}}/>
+            );
+        break;
+        case "textarea":
+            _component_ = (
+                <textarea onChange={_onchange_} minLength={4} maxLength={300} style={{height:"200px"}} {...{placeholder,name,type,disabled}}/>
+            );
+        break;
+    }return (
+        <Fragment>
+            <label htmlFor={name}>
+                {label}
+            </label>
+            {_component_}
+        </Fragment>
     );
 };
